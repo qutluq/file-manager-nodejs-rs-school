@@ -14,6 +14,7 @@ import {
   copyFile,
   moveFile,
   deleteFile,
+  getOSInfo,
 } from "./index.js";
 
 let currentDir = os.homedir();
@@ -90,6 +91,17 @@ const processCommand = async (input) => {
         break;
       case "rm":
         deleteFile(args.join(" "), currentDir);
+        break;
+
+      // OS operations
+      case "os":
+        if (args.length !== 1) {
+          logError("One of following arguments required:");
+          logError("  --EOL, --cpus, --homedir, --username, --architecture");
+
+          break;
+        }
+        getOSInfo(args[0]);
         break;
 
       default:
