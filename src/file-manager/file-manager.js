@@ -15,6 +15,7 @@ import {
   moveFile,
   deleteFile,
   getOSInfo,
+  calculateHash,
 } from "./index.js";
 
 let currentDir = os.homedir();
@@ -102,6 +103,13 @@ const processCommand = async (input) => {
           break;
         }
         getOSInfo(args[0]);
+        break;
+
+      // Hash calculation
+      case "hash":
+        const filePath = args.join(" ");
+        const fileHash = await calculateHash(filePath, currentDir);
+        console.log(fileHash);
         break;
 
       default:
