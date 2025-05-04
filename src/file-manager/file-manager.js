@@ -7,6 +7,13 @@ import {
   goUp,
   changeDirectory,
   listDirectory,
+  catFile,
+  createFile,
+  createDir,
+  renameFile,
+  copyFile,
+  moveFile,
+  deleteFile,
 } from "./index.js";
 
 let currentDir = os.homedir();
@@ -24,7 +31,7 @@ const printCurrentDir = () => {
   rl.prompt();
 };
 
-const processCommand = (input) => {
+const processCommand = async (input) => {
   try {
     if (!input) {
       return;
@@ -49,6 +56,42 @@ const processCommand = (input) => {
       case "ls":
         listDirectory(currentDir);
         break;
+
+      // File operations
+      case "cat":
+        await catFile(args.join(" "), currentDir);
+        break;
+      case "add":
+        createFile(args.join(" "), currentDir);
+        break;
+      case "mkdir":
+        createDir(args.join(" "), currentDir);
+        break;
+      case "rn":
+        if (args.length !== 2) {
+          console.log("Invalid input: requires source and destination");
+          break;
+        }
+        renameFile(args[0], args[1], currentDir);
+        break;
+      case "cp":
+        if (args.length !== 2) {
+          console.log("Invalid input: requires source and destination");
+          break;
+        }
+        await copyFile(args[0], args[1], currentDir);
+        break;
+      case "mv":
+        if (args.length !== 2) {
+          console.log("Invalid input: requires source and destination");
+          break;
+        }
+        await moveFile(args[0], args[1], currentDir);
+        break;
+      case "rm":
+        deleteFile(args.join(" "), currentDir);
+        break;
+
       default:
         logError("Invalid input");
         break;
@@ -62,6 +105,7 @@ const processCommand = (input) => {
 };
 
 const exit = () => {
+  ``;
   console.log(`Thank you for using File Manager, ${username}, goodbye!`);
   rl.close();
   process.exit(0);
