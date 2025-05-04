@@ -144,7 +144,6 @@ const processCommand = async (input) => {
 };
 
 const exit = () => {
-  ``;
   console.log(`Thank you for using File Manager, ${username}, goodbye!`);
   rl.close();
   process.exit(0);
