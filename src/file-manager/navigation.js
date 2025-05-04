@@ -1,6 +1,8 @@
 import * as path from "path";
 import * as fs from "fs";
 
+import { logError, resolvePath } from "./index.js";
+
 import { logError } from "./index.js";
 
 const isRootDirectory = (dir) => path.parse(dir).isRootDirectory();
@@ -40,13 +42,7 @@ export const changeDirectory = (targetPath, currentDir) => {
       throw new Error("Path argument is required");
     }
 
-    if (path.isAbsolute(targetPath)) {
-      newPath = targetPath;
-    } else {
-      newPath = path.join(currentDir, targetPath);
-    }
-
-    newPath = path.resolve(newPath);
+    newPath = resolvePath(currentDir, targetPath);
 
     if (!fs.existsSync(newPath)) {
       throw new Error(`Directory does not exist: ${newPath}`);
