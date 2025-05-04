@@ -1,0 +1,27 @@
+{
+  "name": "node-nodejs-basics",
+  "version": "1.0.0",
+  "description": "This repository is the implementation of https://github.com/AlreadyBored/nodejs-assignments/blob/main/assignments/file-manager/assignment.md",
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node src/file-manager/file-manager.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qutluq/file-manager-nodejs-rs-school.git"
+  },
+  "keywords": [
+    "nodejs",
+    "assignments",
+    "qutluq"
+  ],
+  "author": "qutluq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qutluq/file-manager-nodejs-rs-school/issues"
+  },
+  "homepage": "https://github.com/qutluq/file-manager-nodejs-rs-school#readme"
+}
