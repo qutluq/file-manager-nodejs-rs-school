@@ -27,7 +27,7 @@ export const goUp = (currentDir) => {
       return currentDir;
     }
 
-    return parentDir;
+    return path.dirname(currentDir);
   } catch (error) {
     logError("Operation failed");
     logError(error.message);
