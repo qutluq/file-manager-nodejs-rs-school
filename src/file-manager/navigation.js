@@ -3,9 +3,11 @@ import * as fs from "fs";
 
 import { logError, resolvePath } from "./index.js";
 
-import { logError } from "./index.js";
+const isRootDirectory = (dir) => {
+  const parsedDir = path.parse(dir);
 
-const isRootDirectory = (dir) => path.parse(dir).isRootDirectory();
+  return parsedDir.root === dir;
+};
 
 const isRootDirectoryOrChild = (dir) => {
   if (!dir) return false;
