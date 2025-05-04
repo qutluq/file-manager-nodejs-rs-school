@@ -1,6 +1,13 @@
 import * as os from "os";
 import * as readline from "readline";
-import { parseArgs, generateRandomName, logError } from "./index.js";
+import {
+  parseArgs,
+  generateRandomName,
+  logError,
+  goUp,
+  changeDirectory,
+  listDirectory,
+} from "./index.js";
 
 let currentDir = os.homedir();
 const defaultUsername = generateRandomName();
@@ -31,6 +38,17 @@ const processCommand = (input) => {
     const [command, ...args] = input.split(" ");
 
     switch (command) {
+      // Navigation operations
+      case "up":
+        currentDir = goUp(currentDir);
+        break;
+      case "cd":
+        const targetDir = args.join(" ");
+        currentDir = changeDirectory(targetDir, currentDir);
+        break;
+      case "ls":
+        listDirectory(currentDir);
+        break;
       default:
         logError("Invalid input");
         break;
