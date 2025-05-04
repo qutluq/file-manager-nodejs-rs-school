@@ -16,6 +16,8 @@ import {
   deleteFile,
   getOSInfo,
   calculateHash,
+  compressFile,
+  decompressFile,
 } from "./index.js";
 
 let currentDir = os.homedir();
@@ -110,6 +112,23 @@ const processCommand = async (input) => {
         const filePath = args.join(" ");
         const fileHash = await calculateHash(filePath, currentDir);
         console.log(fileHash);
+        break;
+
+      // Compress/decompress operations
+      case "compress":
+        if (args.length !== 2) {
+          logError("Invalid input: requires source and destination");
+          break;
+        }
+        await compressFile(args[0], args[1], currentDir);
+        break;
+
+      case "decompress":
+        if (args.length !== 2) {
+          logError("Invalid input: requires source and destination");
+          break;
+        }
+        await decompressFile(args[0], args[1], currentDir);
         break;
 
       default:
