@@ -36,7 +36,7 @@ export const goUp = (currentDir) => {
   return currentDir;
 };
 
-export const changeDirectory = (targetPath, currentDir) => {
+export const changeDirectory = async (targetPath, currentDir) => {
   let newPath = currentDir;
 
   try {
@@ -46,11 +46,12 @@ export const changeDirectory = (targetPath, currentDir) => {
 
     newPath = resolvePath(currentDir, targetPath);
 
-    if (!fs.existsSync(newPath)) {
+    const isNewPathExists = await pathExists(newPath);
+    if (!isNewPathExists) {
       throw new Error(`Directory does not exist: ${newPath}`);
     }
 
-    const stats = fs.statSync(newPath);
+    const stats = await fs.promises.stat(newPath);
     if (!stats.isDirectory()) {
       throw new Error(`Not a directory: ${newPath}`);
     }
@@ -70,19 +71,21 @@ export const changeDirectory = (targetPath, currentDir) => {
   return newPath;
 };
 
-export const listDirectory = (currentDir) => {
+export const listDirectory = async (currentDir) => {
   try {
-    const files = fs.readdirSync(currentDir);
+    const files = await fs.promises.readdir(currentDir);
 
-    const fileDetails = files.map((file) => {
-      const filePath = path.join(currentDir, file);
-      const stats = fs.statSync(filePath);
+    const fileDetails = await Promise.all(
+      files.map(async (file) => {
+        const filePath = path.join(currentDir, file);
+        const stats = await fs.promises.stat(filePath);
 
-      return {
-        Name: file,
-        Type: stats.isDirectory() ? "directory" : "file",
-      };
-    });
+        return {
+          Name: file,
+          Type: stats.isDirectory() ? "directory" : "file",
+        };
+      })
+    );
 
     fileDetails.sort((a, b) => {
       if (a.Type === "directory" && b.Type !== "directory") return -1;
@@ -90,6 +93,7 @@ export const listDirectory = (currentDir) => {
       return a.Name.localeCompare(b.Name);
     });
 
+    console.log(); //this is intentional to add empty line
     console.table(fileDetails);
   } catch (error) {
     logError("Operation failed");
