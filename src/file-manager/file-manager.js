@@ -66,17 +66,17 @@ const processCommand = async (input) => {
         await catFile(args.join(" "), currentDir);
         break;
       case "add":
-        createFile(args.join(" "), currentDir);
+        await createFile(args.join(" "), currentDir);
         break;
       case "mkdir":
-        createDir(args.join(" "), currentDir);
+        await createDir(args.join(" "), currentDir);
         break;
       case "rn":
         if (args.length !== 2) {
           console.log("Invalid input: requires source and destination");
           break;
         }
-        renameFile(args[0], args[1], currentDir);
+        await renameFile(args[0], args[1], currentDir);
         break;
       case "cp":
         if (args.length !== 2) {
@@ -93,7 +93,7 @@ const processCommand = async (input) => {
         await moveFile(args[0], args[1], currentDir);
         break;
       case "rm":
-        deleteFile(args.join(" "), currentDir);
+        await deleteFile(args.join(" "), currentDir);
         break;
 
       // OS operations
