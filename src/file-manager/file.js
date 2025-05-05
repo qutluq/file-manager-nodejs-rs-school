@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { resolvePath, logError } from "./index.js";
+import { resolvePath, logError, pathExists } from "./index.js";
 import * as path from "path";
 
 export const catFile = (filePath, currentDir) =>
