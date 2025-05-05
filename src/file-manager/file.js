@@ -3,15 +3,15 @@ import { resolvePath, logError } from "./index.js";
 import * as path from "path";
 
 export const catFile = (filePath, currentDir) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       const resolvedPath = resolvePath(currentDir, filePath);
-
-      if (!fs.existsSync(resolvedPath)) {
+      const isResolvedPathExists = await pathExists(resolvedPath);
+      if (!isResolvedPathExists) {
         throw new Error(`File does not exist: ${resolvedPath}`);
       }
 
-      const stats = fs.statSync(resolvedPath);
+      const stats = await fs.promises.stat(resolvedPath);
       if (!stats.isFile()) {
         throw new Error(`Not a file: ${resolvedPath}`);
       }
@@ -35,15 +35,16 @@ export const catFile = (filePath, currentDir) =>
     }
   });
 
-export const createFile = (filePath, currentDir) => {
+export const createFile = async (filePath, currentDir) => {
   try {
     const resolvedPath = resolvePath(currentDir, filePath);
 
-    if (fs.existsSync(resolvedPath)) {
+    const isResolvedPathExists = await pathExists(resolvedPath);
+    if (!isResolvedPathExists) {
       throw new Error(`File already exists: ${resolvedPath}`);
     }
 
-    fs.writeFileSync(resolvedPath, "");
+    await fs.promises.writeFile(resolvedPath, "");
     console.log(`File created: ${filePath}`);
   } catch (error) {
     logError("Operation failed");
@@ -51,15 +52,16 @@ export const createFile = (filePath, currentDir) => {
   }
 };
 
-export const createDir = (filePath, currentDir) => {
+export const createDir = async (filePath, currentDir) => {
   try {
     const resolvedPath = resolvePath(currentDir, filePath);
 
-    if (fs.existsSync(resolvedPath)) {
+    const isResolvedPathExists = await pathExists(resolvedPath);
+    if (!isResolvedPathExists) {
       throw new Error(`File already exists: ${resolvedPath}`);
     }
 
-    fs.mkdirSync(resolvedPath, { recursive: true });
+    await fs.promises.mkdir(resolvedPath, { recursive: true });
     console.log(`Directory created: ${filePath}`);
   } catch (error) {
     logError("Operation failed");
@@ -67,20 +69,22 @@ export const createDir = (filePath, currentDir) => {
   }
 };
 
-export const renameFile = (oldPath, newPath, currentDir) => {
+export const renameFile = async (oldPath, newPath, currentDir) => {
   try {
     const resolvedOldPath = resolvePath(currentDir, oldPath);
     const resolvedNewPath = resolvePath(currentDir, newPath);
 
-    if (!fs.existsSync(resolvedOldPath)) {
+    const isResolvedOldPathExists = await pathExists(resolvedOldPath);
+    if (!isResolvedOldPathExists) {
       throw new Error(`Source does not exist: ${oldPath}`);
     }
 
-    if (fs.existsSync(resolvedNewPath)) {
+    const isResolvedNewPathExists = await pathExists(resolvedNewPath);
+    if (!isResolvedNewPathExists) {
       throw new Error(`Destination already exists: ${newPath}`);
     }
 
-    fs.renameSync(resolvedOldPath, resolvedNewPath);
+    await fs.promises.rename(resolvedOldPath, resolvedNewPath);
     console.log(`Renamed: ${oldPath} → ${newPath}`);
   } catch (error) {
     logError("Operation failed");
@@ -89,21 +93,24 @@ export const renameFile = (oldPath, newPath, currentDir) => {
 };
 
 export const copyFile = (sourcePath, destPath, currentDir) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       const resolvedSourcePath = resolvePath(currentDir, sourcePath);
       const resolvedDestPath = resolvePath(currentDir, destPath);
 
-      if (!fs.existsSync(resolvedSourcePath)) {
+      const isResolvedSourcePathExists = await pathExists(resolvedSourcePath);
+      if (!isResolvedSourcePathExists) {
         throw new Error(`Source does not exist: ${sourcePath}`);
       }
 
-      const stats = fs.statSync(resolvedSourcePath);
+      const stats = await fs.promises.stat(resolvedSourcePath);
 
       if (stats.isFile()) {
         const destDir = path.dirname(resolvedDestPath);
-        if (!fs.existsSync(destDir)) {
-          fs.mkdirSync(destDir, { recursive: true });
+
+        const isDestDirExists = await pathExists(destDir);
+        if (!isDestDirExists) {
+          await fs.promises.mkdir(destDir, { recursive: true });
         }
         const readStream = fs.createReadStream(resolvedSourcePath);
         const writeStream = fs.createWriteStream(resolvedDestPath);
@@ -129,21 +136,22 @@ export const copyFile = (sourcePath, destPath, currentDir) =>
   });
 
 export const moveFile = (sourcePath, destPath, currentDir) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       const resolvedSourcePath = resolvePath(currentDir, sourcePath);
       const resolvedDestPath = resolvePath(currentDir, path.join(destPath, sourcePath));
-
-      if (!fs.existsSync(resolvedSourcePath)) {
+      const isResolvedSourcePathExists = await pathExists(resolvedSourcePath);
+      if (!isResolvedSourcePathExists) {
         throw new Error(`Source does not exist: ${sourcePath}`);
       }
 
-      const stats = fs.statSync(resolvedSourcePath);
+      const stats = await fs.promises.stat(resolvedSourcePath);
 
       if (stats.isFile()) {
         const destDir = path.dirname(resolvedDestPath);
-        if (!fs.existsSync(destDir)) {
-          fs.mkdirSync(destDir, { recursive: true });
+        const isDestDirExists = await pathExists(destDir);
+        if (!isDestDirExists) {
+          await fs.promises.mkdir(destDir, { recursive: true });
         }
 
         const readStream = fs.createReadStream(resolvedSourcePath);
@@ -151,8 +159,8 @@ export const moveFile = (sourcePath, destPath, currentDir) =>
 
         readStream.pipe(writeStream);
 
-        writeStream.on("close", () => {
-          fs.unlinkSync(resolvedSourcePath);
+        writeStream.on("close", async () => {
+          await fs.promises.unlink(resolvedSourcePath);
           console.log(`Moved: ${sourcePath} → ${destPath}`);
           resolve();
         });
@@ -172,20 +180,21 @@ export const moveFile = (sourcePath, destPath, currentDir) =>
     }
   });
 
-export const deleteFile = (filePath, currentDir) => {
+export const deleteFile = async (filePath, currentDir) => {
   try {
     const resolvedPath = resolvePath(currentDir, filePath);
 
-    if (!fs.existsSync(resolvedPath)) {
+    const isResolvedPathExists = await pathExists(resolvedPath);
+    if (!isResolvedPathExists) {
       throw new Error(`File does not exist: ${filePath}`);
     }
 
-    const stats = fs.statSync(resolvedPath);
+    const stats = await fs.promises.stat(resolvedPath);
     if (!stats.isFile()) {
       throw new Error(`Not a file: ${filePath}`);
     }
 
-    fs.unlinkSync(resolvedPath);
+    await fs.promises.unlink(resolvedPath);
     console.log(`Deleted: ${filePath}`);
   } catch (error) {
     logError("Operation failed");
