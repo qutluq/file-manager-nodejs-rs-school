@@ -40,7 +40,7 @@ export const createFile = async (filePath, currentDir) => {
     const resolvedPath = resolvePath(currentDir, filePath);
 
     const isResolvedPathExists = await pathExists(resolvedPath);
-    if (!isResolvedPathExists) {
+    if (isResolvedPathExists) {
       throw new Error(`File already exists: ${resolvedPath}`);
     }
 
@@ -57,7 +57,7 @@ export const createDir = async (filePath, currentDir) => {
     const resolvedPath = resolvePath(currentDir, filePath);
 
     const isResolvedPathExists = await pathExists(resolvedPath);
-    if (!isResolvedPathExists) {
+    if (isResolvedPathExists) {
       throw new Error(`File already exists: ${resolvedPath}`);
     }
 
@@ -80,7 +80,7 @@ export const renameFile = async (oldPath, newPath, currentDir) => {
     }
 
     const isResolvedNewPathExists = await pathExists(resolvedNewPath);
-    if (!isResolvedNewPathExists) {
+    if (isResolvedNewPathExists) {
       throw new Error(`Destination already exists: ${newPath}`);
     }
 
