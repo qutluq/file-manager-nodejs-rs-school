@@ -1,17 +1,17 @@
-import { logError, resolvePath } from "./index.js";
+import { logError, resolvePath, pathExists } from "./index.js";
 import * as fs from "fs";
 import * as crypto from "crypto";
 
 export const calculateHash = (filePath, currentDir) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       const resolvedPath = resolvePath(currentDir, filePath);
-
-      if (!fs.existsSync(resolvedPath)) {
+      const isResolvedPathExists = await pathExists(resolvedPath);
+      if (!isResolvedPathExists) {
         throw new Error(`File does not exist: ${filePath}`);
       }
 
-      const stats = fs.statSync(resolvedPath);
+      const stats = await fs.promises.stat(resolvedPath);
       if (!stats.isFile()) {
         throw new Error(`Not a file: ${filePath}`);
       }
