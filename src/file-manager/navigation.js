@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as fs from "fs";
 
-import { logError, resolvePath } from "./index.js";
+import { logError, resolvePath, pathExists } from "./index.js";
 
 const isRootDirectory = (dir) => {
   const parsedDir = path.parse(dir);
