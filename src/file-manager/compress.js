@@ -1,16 +1,18 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as zlib from "zlib";
+import { promises as fsPromises } from "fs";
 
-import { logError, resolvePath } from "./index.js";
+import { logError, resolvePath, pathExists } from "./index.js";
 
 export const compressFile = (sourcePath, destPath, currentDir) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       const resolvedSourcePath = resolvePath(currentDir, sourcePath);
       const resolvedDestPath = resolvePath(currentDir, destPath);
 
-      if (!fs.existsSync(resolvedSourcePath)) {
+      const isResolvedSourcePathExists = await pathExists(resolvedSourcePath);
+      if (!isResolvedSourcePathExists) {
         throw new Error(`Source does not exist: ${sourcePath}`);
       }
 
@@ -20,8 +22,9 @@ export const compressFile = (sourcePath, destPath, currentDir) =>
       }
 
       const destDir = path.dirname(resolvedDestPath);
-      if (!fs.existsSync(destDir)) {
-        fs.mkdirSync(destDir, { recursive: true });
+      const isDestDirExists = await pathExists(destDir);
+      if (!isDestDirExists) {
+        await fsPromises.mkdir(destDir, { recursive: true });
       }
 
       const readStream = fs.createReadStream(resolvedSourcePath);
@@ -46,12 +49,13 @@ export const compressFile = (sourcePath, destPath, currentDir) =>
   });
 
 export const decompressFile = (sourcePath, destPath, currentDir) =>
-  new Promise((resolve, reject) => {
+  new Promise(async (resolve, reject) => {
     try {
       const resolvedSourcePath = resolvePath(currentDir, sourcePath);
       const resolvedDestPath = resolvePath(currentDir, destPath);
 
-      if (!fs.existsSync(resolvedSourcePath)) {
+      const isResolvedSourcePathExists = await pathExists(resolvedSourcePath);
+      if (!isResolvedSourcePathExists) {
         throw new Error(`Source does not exist: ${sourcePath}`);
       }
 
@@ -61,8 +65,9 @@ export const decompressFile = (sourcePath, destPath, currentDir) =>
       }
 
       const destDir = path.dirname(resolvedDestPath);
-      if (!fs.existsSync(destDir)) {
-        fs.mkdirSync(destDir, { recursive: true });
+      const isDestDirExists = await pathExists(destDir);
+      if (!isDestDirExists) {
+        await fsPromises.mkdir(destDir, { recursive: true });
       }
 
       const readStream = fs.createReadStream(resolvedSourcePath);
