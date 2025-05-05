@@ -139,6 +139,7 @@ const processCommand = async (input) => {
     logError("Operation failed");
     logError(error.message);
   } finally {
+    console.log(); //this is intentional to add empty line
     printCurrentDir();
   }
 };
