@@ -16,7 +16,7 @@ export const compressFile = (sourcePath, destPath, currentDir) =>
         throw new Error(`Source does not exist: ${sourcePath}`);
       }
 
-      const stats = fs.statSync(resolvedSourcePath);
+      const stats = await fs.promises.stat(resolvedSourcePath);
       if (!stats.isFile()) {
         throw new Error(`Not a file: ${sourcePath}`);
       }
@@ -59,7 +59,7 @@ export const decompressFile = (sourcePath, destPath, currentDir) =>
         throw new Error(`Source does not exist: ${sourcePath}`);
       }
 
-      const stats = fs.statSync(resolvedSourcePath);
+      const stats = await fs.promises.stat(resolvedSourcePath);
       if (!stats.isFile()) {
         throw new Error(`Not a file: ${sourcePath}`);
       }
