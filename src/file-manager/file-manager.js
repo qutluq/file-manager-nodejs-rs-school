@@ -58,7 +58,7 @@ const processCommand = async (input) => {
         currentDir = await changeDirectory(targetDir, currentDir);
         break;
       case "ls":
-        listDirectory(currentDir);
+        await listDirectory(currentDir);
         break;
 
       // File operations
